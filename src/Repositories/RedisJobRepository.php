@@ -246,7 +246,7 @@ class RedisJobRepository implements JobRepository
     /**
      * Get the number of minutes to count for a given type set.
      *
-     * @param string $type
+     * @param  string  $type
      * @return int
      */
     protected function minutesForType($type)
