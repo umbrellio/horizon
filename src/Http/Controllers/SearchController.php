@@ -20,7 +20,7 @@ class SearchController extends Controller
             ->map(function (string $key) {
                 $indexPrefix = config('horizon.prefix_index', 'index');
 
-                return Str::after($key, ":{$indexPrefix}:");
+                return Str::after($key, ":{$indexPrefix}");
             });
     }
 }
