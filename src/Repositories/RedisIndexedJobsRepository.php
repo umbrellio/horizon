@@ -26,7 +26,7 @@ class RedisIndexedJobsRepository implements IndexedJobsRepository
         $jobs = $this->connection()->pipeline(function ($pipe) use ($jobName, $status) {
             $prefix = $status . '_jobs';
             $indexPrefix = config('horizon.prefix_index', 'index');
-            $pipe->keys("{$prefix}:{$indexPrefix}:*{$jobName}*");
+            $pipe->keys("{$prefix}:{$indexPrefix}*{$jobName}*");
         });
 
         return array_shift($jobs);
