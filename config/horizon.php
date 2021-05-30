@@ -107,11 +107,6 @@ return [
         'recent_failed' => 10080,
         'failed' => 10080,
         'monitored' => 10080,
-        'index' => [
-            'pending' => 60,
-            'completed' => 60,
-            'failed' => 10080,
-        ]
     ],
 
     /*
