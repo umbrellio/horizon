@@ -3,9 +3,9 @@ export default {
     props: ["status"],
     data() {
         return {
-            jobNameSearch: null,
-            createdAtFromSearch: null,
-            createdAtToSearch: null,
+            jobNameSearch: '',
+            createdAtFromSearch: '',
+            createdAtToSearch: '',
         }
     },
     methods: {
