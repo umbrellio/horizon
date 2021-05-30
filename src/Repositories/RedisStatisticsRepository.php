@@ -29,7 +29,7 @@ class RedisStatisticsRepository implements StatisticsRepository
         });
 
         return collect($result[0])
-            ->map(function ($indexKey) use ($prefix, $prefixIndex) {
+            ->map(function (string $indexKey) use ($prefix, $prefixIndex) {
 
                 $class = Str::after($indexKey, $prefixIndex);
                 $keyForCount = Str::after($indexKey, $prefix);
