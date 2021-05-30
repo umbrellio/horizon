@@ -22,4 +22,4 @@ Page "Statistics" show how many jobs of each type now exists. For counting this 
 
 **Delete jobs**
 
-Now it is possible to delete jobs which are in status "pending". For this feature was added button "Delete" and checkboxes near each job for selecting, which should be removed. After button was pressed, ids of selected buttons send to ```PendingJobsController:batchDelete```  and removed from database. Also removed from ```pending_jobs``` key and from ```pending_jobs:index:name_of_job``` key.
+Now it is possible to delete jobs which are in status "pending". For this feature was added button "Delete" and checkboxes near each job for selecting, which should be removed. Also it could be selected all jobs on page. After button was pressed, ids of selected jobs send to ```PendingJobsController:batchDelete```  and removed from database. Also removed from ```pending_jobs``` key and from ```pending_jobs:index:name_of_job``` key.
