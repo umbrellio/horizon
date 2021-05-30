@@ -24,9 +24,11 @@ class RedisStatisticsRepository implements StatisticsRepository
         $prefix = config('horizon.prefix');
         $prefixIndex = config('horizon.prefix_index');
 
-        $keys = $this->connection()->keys("{$type}_jobs:{$prefixIndex}*");
+        $result = $this->connection()->pipeline(function ($pipe) use ($type, $prefixIndex) {
+             $pipe->keys("{$type}_jobs:{$prefixIndex}*");
+        });
 
-        return collect($keys)
+        return collect($result[0])
             ->map(function (string $indexKey) use ($prefix, $prefixIndex) {
 
                 $class = Str::after($indexKey, $prefixIndex);
