@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Horizon\Contracts\JobRepository;
 use Laravel\Horizon\JobPayload;
 use Laravel\Horizon\LuaScripts;
@@ -74,7 +75,7 @@ class RedisJobRepository implements JobRepository
     /**
      * The number of minutes until index jobs should be purged.
      *
-     * @var int
+     * @var array
      */
     public $indexJobExpires;
 
@@ -93,7 +94,11 @@ class RedisJobRepository implements JobRepository
         $this->failedJobExpires = config('horizon.trim.failed', 10080);
         $this->recentFailedJobExpires = config('horizon.trim.recent_failed', $this->failedJobExpires);
         $this->monitoredJobExpires = config('horizon.trim.monitored', 10080);
-        $this->indexJobExpires = config('horizon.trim.index', 20);
+        $this->indexJobExpires = config('horizon.trim.index', [
+            'pending' => 60,
+            'completed' => 60,
+            'failed' => 10080,
+        ]);
     }
 
     /**
@@ -590,22 +595,26 @@ class RedisJobRepository implements JobRepository
     }
 
     /**
-     * Trim the index job list.
+     * Trim the index job list by type.
      *
+     * @param string $type
      * @return void
      */
-    public function trimIndexJobs()
+    public function trimIndexJobs(string $type)
     {
-        $keys = $this->connection()->keys('*index*');
-
         $prefix = config('horizon.prefix');
+        $prefixIndex = config('horizon.prefix_index');
 
-        collect($keys)->each(function (string $key) use ($prefix) {
+        $result = $this->connection()->pipeline(function ($pipe) use ($type, $prefixIndex) {
+            $pipe->keys("{$type}_jobs:{$prefixIndex}*");
+        });
 
-            $keyForDelete = preg_match("/$prefix(.*)$/", $key, $matches) ? $matches[1] : $key;
+        collect($result[0])->each(function (string $indexKey) use ($type, $prefix) {
+
+            $keyForDelete = Str::after($indexKey, $prefix);
 
             $this->connection()->zremrangebyscore(
-                $keyForDelete, CarbonImmutable::now()->subMinutes($this->indexJobExpires)->getTimestamp() * -1, '+inf'
+                $keyForDelete, CarbonImmutable::now()->subMinutes($this->indexJobExpires[$type])->getTimestamp() * -1, '+inf'
             );
         });
     }

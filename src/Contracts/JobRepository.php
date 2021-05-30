@@ -195,9 +195,10 @@ interface JobRepository
     /**
      * Trim the index job list.
      *
-     * @return void
+     * @param string $type
+     * @return mixed
      */
-    public function trimIndexJobs();
+    public function trimIndexJobs(string $type);
 
     /**
      * Find a failed job by ID.
