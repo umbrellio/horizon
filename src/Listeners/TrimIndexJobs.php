@@ -27,23 +27,33 @@ class TrimIndexJobs
     /**
      * Handle the event.
      *
-     * @param  \Laravel\Horizon\Events\MasterSupervisorLooped  $event
+     * @param \Laravel\Horizon\Events\MasterSupervisorLooped $event
      * @return void
      */
     public function handle(MasterSupervisorLooped $event)
     {
-        if (! isset($this->lastTrimmed)) {
-            $this->frequency = max(1, intdiv(
-                config('horizon.trim.failed', 10080), 12
-            ));
+        collect([
+            config('horizon.trim.pending'),
+            config('horizon.trim.completed'),
+            config('horizon.trim.failed'),
+        ])->each(function (int $minutes, string $type) {
+            $this->runTrim($minutes, $type);
+        });
+    }
+
+    public function runTrim(int $minutes, string $type): void
+    {
+        if (!isset($this->lastTrimmed)) {
+            $this->frequency = max(1, intdiv($minutes, 12));
 
             $this->lastTrimmed = CarbonImmutable::now()->subMinutes($this->frequency + 1);
         }
 
         if ($this->lastTrimmed->lte(CarbonImmutable::now()->subMinutes($this->frequency))) {
-            app(JobRepository::class)->trimIndexJobs();
+            app(JobRepository::class)->trimIndexJobs($type);
 
             $this->lastTrimmed = CarbonImmutable::now();
         }
     }
+
 }

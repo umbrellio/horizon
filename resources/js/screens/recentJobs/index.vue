@@ -183,7 +183,7 @@
 
                 <template v-if="$route.params.type === 'pending'">
                     <h5>Pending Jobs</h5>
-                    <button @click="deleteSelected" :disabled="selected.length === 0" class="btn btn-danger">Delete selected</button>
+                    <button @click="deleteSelected" :disabled="selected.length === 0" class="btn btn-danger">Delete</button>
                 </template>
 
                 <h5 v-if="$route.params.type === 'completed'">Completed Jobs</h5>
