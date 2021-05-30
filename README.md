@@ -18,8 +18,8 @@ Removing this keys is arranged same way like ```pending_jobs```. Expires time of
 
 **Statistics**
 
-Page statistics show how many jobs of each type now exists. For counting this stats we use same keys like in search. Now for each job we have separate key with id's of all job with this name. Just counting number of this ids give us stats.
+Page "Statistics" show how many jobs of each type now exists. For counting this stats we use same keys like in search. Now for each job we have separate key with id's of all job with this name. Just counting number of this ids give us stats.
 
 **Delete jobs**
 
-Now it is possible to delete jobs from pending. For this feature was added button "Delete" and checkboxes near each job for selecting, which should be removed. After button was pressed, ids of selected buttons send to ```PendingJobsController:batchDelete```  and removed from database. Also removed from ```pending_jobs``` key and from ```pending_jobs:index:name_of_job``` key.
+Now it is possible to delete jobs which are in status "pending". For this feature was added button "Delete" and checkboxes near each job for selecting, which should be removed. After button was pressed, ids of selected buttons send to ```PendingJobsController:batchDelete```  and removed from database. Also removed from ```pending_jobs``` key and from ```pending_jobs:index:name_of_job``` key.
