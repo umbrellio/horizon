@@ -3,6 +3,7 @@
 namespace Laravel\Horizon;
 
 use Laravel\Horizon\Repositories\RedisIndexedJobsRepository;
+use Laravel\Horizon\Repositories\RedisPendingJobsRepository;
 use Laravel\Horizon\Repositories\RedisStatisticsRepository;
 
 trait ServiceBindings
@@ -33,5 +34,6 @@ trait ServiceBindings
         Contracts\WorkloadRepository::class => Repositories\RedisWorkloadRepository::class,
         Contracts\IndexedJobsRepository::class => RedisIndexedJobsRepository::class,
         Contracts\StatisticsRepository::class => RedisStatisticsRepository::class,
+        Contracts\PendingJobsRepository::class => RedisPendingJobsRepository::class,
     ];
 }

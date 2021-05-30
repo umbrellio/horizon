@@ -1,5 +1,15 @@
 <template>
     <tr>
+
+        <td>
+            <input
+                type="checkbox"
+                :checked="this.selected.includes(this.job.id)"
+                :value="job.id"
+                @change="handleSelect"
+            >
+        </td>
+
         <td>
             <router-link :title="job.name" :to="{ name: $route.params.type+'-jobs-preview', params: { jobId: job.id }}">
                 {{ jobBaseName(job.name) }}
@@ -41,10 +51,26 @@
     import moment from 'moment-timezone';
 
     export default {
+
         props: {
             job: {
                 type: Object,
                 required: true
+            },
+            selected: {
+                type: Array,
+            }
+        },
+
+        methods: {
+            handleSelect(event) {
+
+                let selected = [...this.selected];
+
+                event.target.checked
+                    ? selected.push(this.job.id) : selected.splice(selected.indexOf(this.job.id), 1)
+
+                this.$emit('update:selected', selected)
             }
         },
 

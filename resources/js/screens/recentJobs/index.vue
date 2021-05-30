@@ -16,7 +16,28 @@
                 totalPages: 1,
                 jobs: [],
                 additionalQueryParams: {},
+                selected: [],
             };
+        },
+
+        computed: {
+            selectedAll: {
+                get() {
+                    return this.jobs.length ? (this.selected.length === this.jobs.length) : false
+                },
+                set(value) {
+
+                    let selected = [];
+
+                    if (value) {
+                        for (let job of this.jobs) {
+                            selected.push(job.id);
+                        }
+                    }
+
+                    this.selected = selected;
+                },
+            }
         },
 
         /**
@@ -60,6 +81,7 @@
 
 
         methods: {
+
             /**
              * Load the jobs of the given tag.
              */
@@ -133,7 +155,21 @@
                 this.page += 1;
 
                 this.hasNewEntries = false;
-            }
+            },
+
+
+            /**
+             * Deleting the selected jobs
+             */
+            deleteSelected() {
+                this.$http
+                    .post(Horizon.basePath + '/api/jobs/pending/batch-delete', this.selected)
+                    .then(() => {
+
+                        this.loadJobs();
+                        this.selected = [];
+                    })
+            },
         }
     }
 </script>
@@ -144,8 +180,13 @@
 
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 v-if="$route.params.type == 'pending'">Pending Jobs</h5>
-                <h5 v-if="$route.params.type == 'completed'">Completed Jobs</h5>
+
+                <template v-if="$route.params.type === 'pending'">
+                    <h5>Pending Jobs</h5>
+                    <button @click="deleteSelected" :disabled="selected.length === 0" class="btn btn-danger">Delete selected</button>
+                </template>
+
+                <h5 v-if="$route.params.type === 'completed'">Completed Jobs</h5>
             </div>
 
             <div v-if="!ready"
@@ -159,7 +200,7 @@
             </div>
 
 
-            <div v-if="ready && jobs.length == 0"
+            <div v-if="ready && jobs.length === 0"
                  class="d-flex flex-column align-items-center justify-content-center card-bg-secondary p-5 bottom-radius">
                 <span>There aren't any jobs.</span>
             </div>
@@ -167,11 +208,14 @@
             <table v-if="ready && jobs.length > 0" class="table table-hover table-sm mb-0">
                 <thead>
                 <tr>
+                    <th style="width: 40px">
+                        <input type="checkbox" v-model="selectedAll">
+                    </th>
                     <th>Job</th>
-                    <th v-if="$route.params.type=='pending'" class="text-right">Queued At</th>
-                    <th v-if="$route.params.type=='completed'">Queued At</th>
-                    <th v-if="$route.params.type=='completed'">Completed At</th>
-                    <th v-if="$route.params.type=='completed'" class="text-right">Runtime</th>
+                    <th v-if="$route.params.type === 'pending'" class="text-right">Queued At</th>
+                    <th v-if="$route.params.type ==='completed'">Queued At</th>
+                    <th v-if="$route.params.type ==='completed'">Completed At</th>
+                    <th v-if="$route.params.type ==='completed'" class="text-right">Runtime</th>
                 </tr>
                 </thead>
 
@@ -185,13 +229,13 @@
                         </td>
                     </tr>
 
-                    <tr v-for="job in jobs" :key="job.id" :job="job" is="job-row">
+                    <tr v-for="job in jobs" :key="job.id" :job="job" :selected.sync="selected" is="job-row">
                     </tr>
                 </tbody>
             </table>
 
             <div v-if="ready && jobs.length" class="p-3 d-flex justify-content-between border-top">
-                <button @click="previous" class="btn btn-secondary btn-md" :disabled="page==1">Previous</button>
+                <button @click="previous" class="btn btn-secondary btn-md" :disabled="page === 1">Previous</button>
                 <button @click="next" class="btn btn-secondary btn-md" :disabled="page>=totalPages">Next</button>
             </div>
         </div>

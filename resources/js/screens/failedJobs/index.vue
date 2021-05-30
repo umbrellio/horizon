@@ -210,7 +210,7 @@
             </div>
 
 
-            <div v-if="ready && jobs.length == 0" class="d-flex flex-column align-items-center justify-content-center card-bg-secondary p-5 bottom-radius">
+            <div v-if="ready && jobs.length === 0" class="d-flex flex-column align-items-center justify-content-center card-bg-secondary p-5 bottom-radius">
                 <span>There aren't any failed jobs.</span>
             </div>
 

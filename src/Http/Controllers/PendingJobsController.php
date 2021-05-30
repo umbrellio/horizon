@@ -2,8 +2,10 @@
 
 namespace Laravel\Horizon\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Horizon\Contracts\JobRepository;
+use Laravel\Horizon\Contracts\PendingJobsRepository;
 
 class PendingJobsController extends Controller
 {
@@ -45,6 +47,13 @@ class PendingJobsController extends Controller
             'jobs' => $jobs,
             'total' => $this->jobs->countPending(),
         ];
+    }
+
+    public function batchDelete(Request $request, PendingJobsRepository $pendingJobs): JsonResponse
+    {
+        $pendingJobs->deleteByIds($request->all());
+
+        return new JsonResponse();
     }
 
     /**
