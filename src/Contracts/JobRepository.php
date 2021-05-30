@@ -196,7 +196,7 @@ interface JobRepository
      * Trim the index job list.
      *
      * @param string $type
-     * @return mixed
+     * @return void
      */
     public function trimIndexJobs(string $type);
 
