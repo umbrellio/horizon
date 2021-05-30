@@ -1,4 +1,6 @@
 <script type="text/ecmascript-6">
+import moment from "moment-timezone";
+
 export default {
     props: ["status"],
     data() {
@@ -28,19 +30,27 @@ export default {
         },
 
         clear() {
-            this.$refs["jobNameField"].setValue(null)
-            this.jobNameSearch = null
-            this.createdAtFromSearch = null
-            this.createdAtToSearch = null
+            this.$refs["jobNameField"].setValue('')
+            this.jobNameSearch = ''
+            this.createdAtFromSearch = ''
+            this.createdAtToSearch = ''
 
             this.fireEventUpdated()
+        },
+
+        formatDateToUtc(dateString) {
+            if (!dateString) {
+                return dateString
+            }
+
+            return moment(dateString).subtract(new Date().getTimezoneOffset() / 60)
         },
 
         fireEventUpdated() {
             this.$emit("updated", {
                 job_name: this.jobNameSearch,
-                created_at_from: this.createdAtFromSearch,
-                created_at_to: this.createdAtToSearch,
+                created_at_from: this.formatDateToUtc(this.createdAtFromSearch),
+                created_at_to: this.formatDateToUtc(this.createdAtToSearch),
             })
         }
     }
