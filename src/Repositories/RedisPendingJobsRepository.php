@@ -26,8 +26,6 @@ class RedisPendingJobsRepository implements PendingJobsRepository
             }
         });
 
-        $jobs = collect($jobs);
-
         collect($jobs)
             ->filter(function (array $job) {
                 return $job['status'] === 'pending';
