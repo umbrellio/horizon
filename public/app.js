@@ -4055,6 +4055,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _job_row__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./job-row */ "./resources/js/screens/recentJobs/job-row.vue");
 /* harmony import */ var _components_JobFilter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/JobFilter */ "./resources/js/components/JobFilter.vue");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -4070,8 +4076,37 @@ __webpack_require__.r(__webpack_exports__);
       perPage: 50,
       totalPages: 1,
       jobs: [],
-      additionalQueryParams: {}
+      additionalQueryParams: {},
+      selected: []
     };
+  },
+  computed: {
+    selectedAll: {
+      get: function get() {
+        return this.jobs.length ? this.selected.length === this.jobs.length : false;
+      },
+      set: function set(value) {
+        var selected = [];
+
+        if (value) {
+          var _iterator = _createForOfIteratorHelper(this.jobs),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var job = _step.value;
+              selected.push(job.id);
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        }
+
+        this.selected = selected;
+      }
+    }
   },
 
   /**
@@ -4170,6 +4205,19 @@ __webpack_require__.r(__webpack_exports__);
       this.loadJobs(this.page * this.perPage);
       this.page += 1;
       this.hasNewEntries = false;
+    },
+
+    /**
+     * Deleting the selected jobs
+     */
+    deleteSelected: function deleteSelected() {
+      var _this3 = this;
+
+      this.$http.post(Horizon.basePath + '/api/jobs/pending/batch-delete', this.selected).then(function () {
+        _this3.loadJobs();
+
+        _this3.selected = [];
+      });
     }
   }
 });
@@ -4191,6 +4239,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var phpunserialize__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(phpunserialize__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var moment_timezone__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment-timezone */ "./node_modules/moment-timezone/index.js");
 /* harmony import */ var moment_timezone__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment_timezone__WEBPACK_IMPORTED_MODULE_1__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4236,6 +4306,17 @@ __webpack_require__.r(__webpack_exports__);
     job: {
       type: Object,
       required: true
+    },
+    selected: {
+      type: Array
+    }
+  },
+  methods: {
+    handleSelect: function handleSelect(event) {
+      var selected = _toConsumableArray(this.selected);
+
+      event.target.checked ? selected.push(this.job.id) : selected.splice(selected.indexOf(this.job.id), 1);
+      this.$emit('update:selected', selected);
     }
   },
   computed: {
@@ -83644,7 +83725,7 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _vm.ready && _vm.jobs.length == 0
+      _vm.ready && _vm.jobs.length === 0
         ? _c(
             "div",
             {
@@ -85620,14 +85701,27 @@ var render = function() {
               "card-header d-flex align-items-center justify-content-between"
           },
           [
-            _vm.$route.params.type == "pending"
-              ? _c("h5", [_vm._v("Pending Jobs")])
+            _vm.$route.params.type === "pending"
+              ? [
+                  _c("h5", [_vm._v("Pending Jobs")]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      attrs: { disabled: _vm.selected.length === 0 },
+                      on: { click: _vm.deleteSelected }
+                    },
+                    [_vm._v("Delete selected")]
+                  )
+                ]
               : _vm._e(),
             _vm._v(" "),
-            _vm.$route.params.type == "completed"
+            _vm.$route.params.type === "completed"
               ? _c("h5", [_vm._v("Completed Jobs")])
               : _vm._e()
-          ]
+          ],
+          2
         ),
         _vm._v(" "),
         !_vm.ready
@@ -85662,7 +85756,7 @@ var render = function() {
             )
           : _vm._e(),
         _vm._v(" "),
-        _vm.ready && _vm.jobs.length == 0
+        _vm.ready && _vm.jobs.length === 0
           ? _c(
               "div",
               {
@@ -85677,23 +85771,63 @@ var render = function() {
           ? _c("table", { staticClass: "table table-hover table-sm mb-0" }, [
               _c("thead", [
                 _c("tr", [
+                  _c("th", { staticStyle: { ma: "40px" } }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.selectedAll,
+                          expression: "selectedAll"
+                        }
+                      ],
+                      attrs: { type: "checkbox" },
+                      domProps: {
+                        checked: Array.isArray(_vm.selectedAll)
+                          ? _vm._i(_vm.selectedAll, null) > -1
+                          : _vm.selectedAll
+                      },
+                      on: {
+                        change: function($event) {
+                          var $$a = _vm.selectedAll,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = null,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.selectedAll = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.selectedAll = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.selectedAll = $$c
+                          }
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
                   _c("th", [_vm._v("Job")]),
                   _vm._v(" "),
-                  _vm.$route.params.type == "pending"
+                  _vm.$route.params.type === "pending"
                     ? _c("th", { staticClass: "text-right" }, [
                         _vm._v("Queued At")
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.$route.params.type == "completed"
+                  _vm.$route.params.type === "completed"
                     ? _c("th", [_vm._v("Queued At")])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.$route.params.type == "completed"
+                  _vm.$route.params.type === "completed"
                     ? _c("th", [_vm._v("Completed At")])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.$route.params.type == "completed"
+                  _vm.$route.params.type === "completed"
                     ? _c("th", { staticClass: "text-right" }, [
                         _vm._v("Runtime")
                       ])
@@ -85751,7 +85885,12 @@ var render = function() {
                     return _c("job-row", {
                       key: job.id,
                       tag: "tr",
-                      attrs: { job: job }
+                      attrs: { job: job, selected: _vm.selected },
+                      on: {
+                        "update:selected": function($event) {
+                          _vm.selected = $event
+                        }
+                      }
                     })
                   })
                 ],
@@ -85769,7 +85908,7 @@ var render = function() {
                   "button",
                   {
                     staticClass: "btn btn-secondary btn-md",
-                    attrs: { disabled: _vm.page == 1 },
+                    attrs: { disabled: _vm.page === 1 },
                     on: { click: _vm.previous }
                   },
                   [_vm._v("Previous")]
@@ -85816,6 +85955,17 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", [
+    _c("td", [
+      _c("input", {
+        attrs: { type: "checkbox" },
+        domProps: {
+          checked: this.selected.includes(this.job.id),
+          value: _vm.job.id
+        },
+        on: { change: _vm.handleSelect }
+      })
+    ]),
+    _vm._v(" "),
     _c(
       "td",
       [
