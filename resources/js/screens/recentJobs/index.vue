@@ -208,7 +208,7 @@
             <table v-if="ready && jobs.length > 0" class="table table-hover table-sm mb-0">
                 <thead>
                 <tr>
-                    <th style="ma: 40px">
+                    <th style="width: 40px">
                         <input type="checkbox" v-model="selectedAll">
                     </th>
                     <th>Job</th>
