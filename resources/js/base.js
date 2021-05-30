@@ -1,6 +1,20 @@
 import moment from 'moment-timezone';
 
 export default {
+    data() {
+        return {
+            alert: {
+                type: null,
+                autoClose: 0,
+                message: '',
+                confirmationProceed: null,
+                confirmationCancel: null,
+            },
+
+            autoLoadsNewEntries: localStorage.autoLoadsNewEntries === '1',
+        };
+    },
+
     computed: {
         Horizon() {
             return Horizon;

@@ -69,5 +69,5 @@ new Vue({
                 isDownForMaintenance: root.dataset.isDownForMaintenance,
             },
         }),
-    router,
+    router
 });

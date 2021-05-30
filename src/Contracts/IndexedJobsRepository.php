@@ -17,5 +17,12 @@ interface IndexedJobsRepository
      */
     public function getIndexedPending($startingAt, $jobName = null, $createdAtFrom = null, $createdAtTo = null);
 
+    /**
+     * @param string $createdAtTo
+     * @param string $jobName
+     * @param string $createdAtFrom
+     */
+    public function getCountIndexedPending($jobName = null, $createdAtFrom = null, $createdAtTo = null): int;
+
     public function getIndexedCompleted(string $jobName): array;
 }

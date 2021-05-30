@@ -50,8 +50,8 @@ class RedisIndexedJobsRepository implements IndexedJobsRepository
      */
     public function getIndexedPending($startingAt, $jobName = null, $createdAtFrom = null, $createdAtTo = null)
     {
-        $from = !empty($createdAtFrom) ? strtotime($createdAtFrom) : '-inf';
-        $to = !empty($createdAtTo) ? strtotime($createdAtTo) : '+inf';
+        $from = !empty($createdAtTo) ? strtotime($createdAtTo) * -1 : '-inf';
+        $to = !empty($createdAtFrom) ? strtotime($createdAtFrom) * -1 : '+inf';
 
         $key = empty($jobName) ? 'pending_jobs' : $this->getKeysByJobNameAndStatus($jobName, 'pending')[0];
         $indexPrefix = config('horizon.prefix');
@@ -67,6 +67,18 @@ class RedisIndexedJobsRepository implements IndexedJobsRepository
         return $this->redisJobRepository->getJobs($this->connection()->zrangebyscore(
             $key, $from, $to, $options
         ), $startingAt + 1);
+    }
+
+    public function getCountIndexedPending($jobName = null, $createdAtFrom = null, $createdAtTo = null): int
+    {
+        $from = !empty($createdAtTo) ? strtotime($createdAtTo) * -1 : '-inf';
+        $to = !empty($createdAtFrom) ? strtotime($createdAtFrom) * -1 : '+inf';
+
+        $key = empty($jobName) ? 'pending_jobs' : $this->getKeysByJobNameAndStatus($jobName, 'pending')[0];
+        $indexPrefix = config('horizon.prefix');
+        $key = Str::after($key, "{$indexPrefix}");
+
+        return (int) $this->connection()->zcount($key, $from, $to);
     }
 
     public function getIndexedCompleted(string $jobName): array

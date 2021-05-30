@@ -53,22 +53,25 @@ class PendingJobsController extends Controller
             $createdAtTo = $request->query('created_at_to');
             $startingAt = $request->query('starting_at', -1);
 
-            $jobs = $this->indexedJobs->getIndexedPending($startingAt, $jobName, $createdAtFrom, $createdAtTo, )->map(function ($job) {
+            $jobs = $this->indexedJobs->getIndexedPending($startingAt, $jobName, $createdAtFrom, $createdAtTo)->map(function ($job) {
                 $job->payload = json_decode($job->payload);
 
                 return $job;
             })->values();
 
+            $countPending = $this->indexedJobs->getCountIndexedPending($jobName, $createdAtFrom, $createdAtTo);
         } else {
             $jobs = $this->jobs->getPending($request->query('starting_at', -1))->map(function ($job) {
                 $job->payload = json_decode($job->payload);
 
                 return $job;
             })->values();
-    }
+            $countPending = $this->jobs->countPending();
+        }
+
         return [
             'jobs' => $jobs,
-            'total' => $this->jobs->countPending(),
+            'total' => $countPending,
         ];
     }
 
