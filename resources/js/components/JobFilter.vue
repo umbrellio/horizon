@@ -25,6 +25,10 @@ export default {
         },
 
         setJobName(selectedJobName) {
+            if (!selectedJobName) {
+                return;
+            }
+
             this.jobNameSearch = selectedJobName
             this.fireEventUpdated()
         },
