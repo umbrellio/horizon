@@ -658,6 +658,7 @@ class RedisJobRepository implements JobRepository
             $this->removeJobReference($pipe, 'pending_jobs', $payload);
             $this->removeJobReference($pipe, 'completed_jobs', $payload);
             $this->removeJobReference($pipe, $this->generateIndexKey('pending_jobs', $payload), $payload);
+            $this->removeJobReference($pipe, $this->generateIndexKey('completed_jobs', $payload), $payload);
 
             $pipe->hmset(
                 $payload->id(), [
