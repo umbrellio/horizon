@@ -11,9 +11,11 @@ This fork adds:
 
 ## Description
 
-**Search** &nbsp
+**Search** 
+<div>
 When job pushed to "pending" in ```RedisJobRepository:pushed```, it also create an index for this job. It means that id of job is stored in general ```pending_jobs``` key and also in separate ```pending_jobs:index:name_of_job``` key. ```index``` could be configured in ```config/horizon```. When user try to filter jobs, we could find id of needed jobs easily, because they all are stored in one key.
 Removing this keys is arranged same way like ```pending_jobs```. Expires time also could be configured in ```config/horizon```.
+</div>
 **Statistics**.
 
 **Delete jobs**
