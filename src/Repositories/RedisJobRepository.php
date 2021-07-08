@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Horizon\Contracts\JobRepository;
 use Laravel\Horizon\JobPayload;
 use Laravel\Horizon\LuaScripts;
@@ -307,6 +308,11 @@ class RedisJobRepository implements JobRepository
         });
     }
 
+    public function generateIndexKey(string $prefix, JobPayload $payload): string
+    {
+        return "{$prefix}:" . config('horizon.prefix_index') . $payload->decoded['displayName'];
+    }
+
     /**
      * Insert the job into storage.
      *
@@ -320,6 +326,7 @@ class RedisJobRepository implements JobRepository
         $this->connection()->pipeline(function ($pipe) use ($connection, $queue, $payload) {
             $this->storeJobReference($pipe, 'recent_jobs', $payload);
             $this->storeJobReference($pipe, 'pending_jobs', $payload);
+            $this->storeJobReference($pipe, $this->generateIndexKey('pending_jobs', $payload), $payload);
 
             $time = str_replace(',', '.', microtime(true));
 
@@ -450,7 +457,9 @@ class RedisJobRepository implements JobRepository
 
         $this->connection()->pipeline(function ($pipe) use ($payload) {
             $this->storeJobReference($pipe, 'completed_jobs', $payload);
+            $this->storeJobReference($pipe, $this->generateIndexKey('completed_jobs', $payload), $payload);
             $this->removeJobReference($pipe, 'pending_jobs', $payload);
+            $this->removeJobReference($pipe, $this->generateIndexKey('pending_jobs', $payload), $payload);
 
             $pipe->hmset(
                 $payload->id(), [
@@ -574,6 +583,31 @@ class RedisJobRepository implements JobRepository
     }
 
     /**
+     * Trim the index job list by type.
+     *
+     * @param string $type
+     * @return void
+     */
+    public function trimIndexJobs(string $type)
+    {
+        $prefix = config('horizon.prefix');
+        $prefixIndex = config('horizon.prefix_index');
+
+        $result = $this->connection()->pipeline(function ($pipe) use ($type, $prefixIndex) {
+            $pipe->keys("{$type}_jobs:{$prefixIndex}*");
+        });
+
+        collect($result[0])->each(function (string $indexKey) use ($type, $prefix) {
+
+            $keyForDelete = Str::after($indexKey, $prefix);
+
+            $this->connection()->zremrangebyscore(
+                $keyForDelete, CarbonImmutable::now()->subMinutes(config("horizon.trim.$type"))->getTimestamp() * -1, '+inf'
+            );
+        });
+    }
+
+    /**
      * Find a failed job by ID.
      *
      * @param  string  $id
@@ -608,8 +642,11 @@ class RedisJobRepository implements JobRepository
         $this->connection()->pipeline(function ($pipe) use ($exception, $connection, $queue, $payload) {
             $this->storeJobReference($pipe, 'failed_jobs', $payload);
             $this->storeJobReference($pipe, 'recent_failed_jobs', $payload);
+            $this->storeJobReference($pipe, $this->generateIndexKey('failed_jobs', $payload), $payload);
             $this->removeJobReference($pipe, 'pending_jobs', $payload);
             $this->removeJobReference($pipe, 'completed_jobs', $payload);
+            $this->removeJobReference($pipe, $this->generateIndexKey('pending_jobs', $payload), $payload);
+            $this->removeJobReference($pipe, $this->generateIndexKey('completed_jobs', $payload), $payload);
 
             $pipe->hmset(
                 $payload->id(), [
