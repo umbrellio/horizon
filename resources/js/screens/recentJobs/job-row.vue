@@ -1,37 +1,49 @@
 <template>
     <tr>
+
+        <td>
+            <input
+                type="checkbox"
+                :checked="this.selected.includes(this.job.id)"
+                :value="job.id"
+                @change="handleSelect"
+            >
+        </td>
+
         <td>
             <router-link :title="job.name" :to="{ name: $route.params.type+'-jobs-preview', params: { jobId: job.id }}">
                 {{ jobBaseName(job.name) }}
             </router-link>
 
-            <small class="badge badge-secondary badge-sm"
-                    v-tooltip:top="`Delayed for ${delayed}`"
-                    v-if="delayed && (job.status == 'reserved' || job.status == 'pending')">
+            <small className="badge badge-secondary badge-sm"
+                   v-tooltip:top="`Delayed for ${delayed}`"
+                   v-if="delayed && (job.status == 'reserved' || job.status == 'pending')">
                 Delayed
             </small>
 
             <br>
 
-            <small class="text-muted">
-                Queue: {{job.queue}}
+            <small className="text-muted">
+                Queue: {{ job.queue }}
 
-                <span v-if="job.payload.tags && job.payload.tags.length" class="text-break">
-                    | Tags: {{ job.payload.tags && job.payload.tags.length ? job.payload.tags.slice(0,3).join(', ') : '' }}<span v-if="job.payload.tags.length > 3"> ({{ job.payload.tags.length - 3 }} more)</span>
+                <span v-if="job.payload.tags && job.payload.tags.length" className="text-break">
+                    | Tags: {{
+                        job.payload.tags && job.payload.tags.length ? job.payload.tags.slice(0, 3).join(', ') : ''
+                    }}<span v-if="job.payload.tags.length > 3"> ({{ job.payload.tags.length - 3 }} more)</span>
                 </span>
             </small>
         </td>
 
-        <td class="table-fit">
+        <td className="table-fit">
             {{ readableTimestamp(job.payload.pushedAt) }}
         </td>
 
-        <td v-if="$route.params.type=='completed'" class="table-fit">
+        <td v-if="$route.params.type=='completed'" className="table-fit">
             {{ readableTimestamp(job.completed_at) }}
         </td>
 
-        <td v-if="$route.params.type=='completed'" class="table-fit">
-            <span>{{ job.completed_at ? (job.completed_at - job.reserved_at).toFixed(2)+'s' : '-' }}</span>
+        <td v-if="$route.params.type=='completed'" className="table-fit">
+            <span>{{ job.completed_at ? (job.completed_at - job.reserved_at).toFixed(2) + 's ' : '-' }}</span>
         </td>
     </tr>
 </template>
@@ -45,9 +57,19 @@
             job: {
                 type: Object,
                 required: true
+            },
+        selected: {
+            type: Array,
             }
         },
-
+        methods: {
+            handleSelect(event) {
+                let selected = [...this.selected];
+                event.target.checked
+                    ? selected.push(this.job.id) : selected.splice(selected.indexOf(this.job.id), 1)
+                this.$emit('update:selected', selected)
+            }
+        },
         computed: {
             unserialized() {
                 try {
