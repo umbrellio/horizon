@@ -49,6 +49,13 @@ class PendingJobsController extends Controller
         ];
     }
 
+    /**
+     * Delete pending jobs.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param PendingJobsRepository $pendingJobs
+     * @return JsonResponse
+     */
     public function batchDelete(Request $request, PendingJobsRepository $pendingJobs): JsonResponse
     {
         $pendingJobs->deleteByIds($request->all());

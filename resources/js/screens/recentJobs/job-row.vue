@@ -15,7 +15,7 @@
                 {{ jobBaseName(job.name) }}
             </router-link>
 
-            <small className="badge badge-secondary badge-sm"
+            <small class="badge badge-secondary badge-sm"
                    v-tooltip:top="`Delayed for ${delayed}`"
                    v-if="delayed && (job.status == 'reserved' || job.status == 'pending')">
                 Delayed
@@ -23,10 +23,10 @@
 
             <br>
 
-            <small className="text-muted">
+            <small class="text-muted">
                 Queue: {{ job.queue }}
 
-                <span v-if="job.payload.tags && job.payload.tags.length" className="text-break">
+                <span v-if="job.payload.tags && job.payload.tags.length" class="text-break">
                     | Tags: {{
                         job.payload.tags && job.payload.tags.length ? job.payload.tags.slice(0, 3).join(', ') : ''
                     }}<span v-if="job.payload.tags.length > 3"> ({{ job.payload.tags.length - 3 }} more)</span>
@@ -34,15 +34,15 @@
             </small>
         </td>
 
-        <td className="table-fit">
+        <td class="table-fit">
             {{ readableTimestamp(job.payload.pushedAt) }}
         </td>
 
-        <td v-if="$route.params.type=='completed'" className="table-fit">
+        <td v-if="$route.params.type=='completed'" class="table-fit">
             {{ readableTimestamp(job.completed_at) }}
         </td>
 
-        <td v-if="$route.params.type=='completed'" className="table-fit">
+        <td v-if="$route.params.type=='completed'" class="table-fit">
             <span>{{ job.completed_at ? (job.completed_at - job.reserved_at).toFixed(2) + 's ' : '-' }}</span>
         </td>
     </tr>

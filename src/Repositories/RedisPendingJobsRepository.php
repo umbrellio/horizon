@@ -9,7 +9,9 @@ use Laravel\Horizon\Contracts\PendingJobsRepository;
 class RedisPendingJobsRepository implements PendingJobsRepository
 {
     /**
-     * @var RedisFactory
+     * The Redis connection instance.
+     *
+     * @var \Illuminate\Contracts\Redis\Factory
      */
     public $redis;
 
@@ -18,11 +20,17 @@ class RedisPendingJobsRepository implements PendingJobsRepository
         $this->redis = $redis;
     }
 
+    /**
+     * Delete the jobs with the given IDs
+     *
+     * @param array $ids
+     * @return void
+     */
     public function deleteByIds(array $ids): void
     {
         $jobs = $this->connection()->pipeline(function ($pipe) use ($ids) {
             foreach ($ids as $id) {
-                $pipe->hmget($id, ['id', 'name', 'status']);
+                $pipe->hmget($id, ['id', 'status']);
             }
         });
 
@@ -30,22 +38,30 @@ class RedisPendingJobsRepository implements PendingJobsRepository
             ->filter(function (array $job) {
                 return $job['status'] === 'pending';
             })->each(function (array $job) {
-                $this->deleteJob($job['id'], $job['name']);
+                $this->deleteJob($job['id']);
             });
     }
 
-    private function deleteJob(string $id, string $name): void
+    /**
+     * Delete the job with the given ID
+     *
+     * @param string $id
+     * @return void
+     */
+    private function deleteJob($id): void
     {
-        $pendingIndexKey = 'pending_jobs:' . config('horizon.prefix_index') . $name;
-
-        $this->connection()->pipeline(function ($pipe) use ($id, $pendingIndexKey) {
+        $this->connection()->pipeline(function ($pipe) use ($id) {
 
             $pipe->del($id);
             $pipe->zrem('pending_jobs', $id);
-            $pipe->zrem($pendingIndexKey, $id);
         });
     }
 
+    /**
+     * Get the Redis connection instance.
+     *
+     * @return \Illuminate\Redis\Connections\Connection
+     */
     protected function connection(): Connection
     {
         return $this->redis->connection('horizon');

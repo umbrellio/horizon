@@ -84700,7 +84700,7 @@ var render = function() {
                     arg: "top"
                   }
                 ],
-                attrs: { className: "badge badge-secondary badge-sm" }
+                staticClass: "badge badge-secondary badge-sm"
               },
               [_vm._v("\n            Delayed\n        ")]
             )
@@ -84708,12 +84708,12 @@ var render = function() {
         _vm._v(" "),
         _c("br"),
         _vm._v(" "),
-        _c("small", { attrs: { className: "text-muted" } }, [
+        _c("small", { staticClass: "text-muted" }, [
           _vm._v(
             "\n            Queue: " + _vm._s(_vm.job.queue) + "\n\n            "
           ),
           _vm.job.payload.tags && _vm.job.payload.tags.length
-            ? _c("span", { attrs: { className: "text-break" } }, [
+            ? _c("span", { staticClass: "text-break" }, [
                 _vm._v(
                   "\n                | Tags: " +
                     _vm._s(
@@ -84738,7 +84738,7 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _c("td", { attrs: { className: "table-fit" } }, [
+    _c("td", { staticClass: "table-fit" }, [
       _vm._v(
         "\n        " +
           _vm._s(_vm.readableTimestamp(_vm.job.payload.pushedAt)) +
@@ -84747,7 +84747,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _vm.$route.params.type == "completed"
-      ? _c("td", { attrs: { className: "table-fit" } }, [
+      ? _c("td", { staticClass: "table-fit" }, [
           _vm._v(
             "\n        " +
               _vm._s(_vm.readableTimestamp(_vm.job.completed_at)) +
@@ -84757,7 +84757,7 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.$route.params.type == "completed"
-      ? _c("td", { attrs: { className: "table-fit" } }, [
+      ? _c("td", { staticClass: "table-fit" }, [
           _c("span", [
             _vm._v(
               _vm._s(
