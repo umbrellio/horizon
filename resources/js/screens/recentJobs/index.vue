@@ -1,137 +1,164 @@
 <script type="text/ecmascript-6">
-import JobRow from './job-row';
+    import JobRow from './job-row';
 
-export default {
-    /**
-     * The component's data.
-     */
-    data() {
-        return {
-            ready: false,
-            loadingNewEntries: false,
-            hasNewEntries: false,
-            page: 1,
-            perPage: 50,
-            totalPages: 1,
-            jobs: [],
-            selected: [],
-        };
-    },
-    computed: {
-        selectedAll: {
-            get() {
-                return this.jobs.length ? (this.selected.length === this.jobs.length) : false
-            },
-            set(value) {
-                let selected = [];
-                if (value) {
-                    for (let job of this.jobs) {
-                        selected.push(job.id);
-                    }
-                }
-                this.selected = selected;
-            },
-        }
-    },
-    /**
-     * Components
-     */
-    components: {
-        JobRow,
-    },
-    /**
-     * Prepare the component.
-     */
-    mounted() {
-        document.title = this.$route.params.type == 'pending'
-            ? 'Horizon - Pending Jobs'
-            : 'Horizon - Completed Jobs';
-        this.loadJobs();
-        this.refreshJobsPeriodically();
-    },
-    /**
-     * Clean after the component is destroyed.
-     */
-    destroyed() {
-        clearInterval(this.interval);
-    },
-    /**
-     * Watch these properties for changes.
-     */
-    watch: {
-        '$route'() {
-            this.page = 1;
-            this.loadJobs();
-        }
-    },
-    methods: {
+    export default {
         /**
-         * Load the jobs of the given tag.
+         * The component's data.
          */
-        loadJobs(starting = -1, refreshing = false) {
-            if (!refreshing) {
-                this.ready = false;
+        data() {
+            return {
+                ready: false,
+                loadingNewEntries: false,
+                hasNewEntries: false,
+                page: 1,
+                perPage: 50,
+                totalPages: 1,
+                jobs: [],
+                selected: [],
+            };
+        },
+
+        computed: {
+            selectedAll: {
+                get() {
+                    return this.jobs.length ? (this.selected.length === this.jobs.length) : false
+                },
+                set(value) {
+                    let selected = [];
+                    if (value) {
+                        for (let job of this.jobs) {
+                            selected.push(job.id);
+                        }
+                    }
+                    this.selected = selected;
+                },
             }
-            this.$http.get(Horizon.basePath + '/api/jobs/' + this.$route.params.type + '?starting_at=' + starting + '&limit=' + this.perPage)
-                .then(response => {
-                    if (!this.$root.autoLoadsNewEntries && refreshing && this.jobs.length && _.first(response.data.jobs).id !== _.first(this.jobs).id) {
-                        this.hasNewEntries = true;
-                    } else {
-                        this.jobs = response.data.jobs;
-                        this.totalPages = Math.ceil(response.data.total / this.perPage);
-                    }
-                    this.ready = true;
-                });
-        },
-        loadNewEntries() {
-            this.jobs = [];
-            this.loadJobs(-1, false);
-            this.hasNewEntries = false;
         },
         /**
-         * Refresh the jobs every period of time.
+         * Components
          */
-        refreshJobsPeriodically() {
-            this.interval = setInterval(() => {
-                if (this.page != 1) {
-                    return;
+        components: {
+            JobRow,
+        },
+        /**
+         * Prepare the component.
+         */
+        mounted() {
+            document.title = this.$route.params.type == 'pending'
+                        ? 'Horizon - Pending Jobs'
+                        : 'Horizon - Completed Jobs';
+
+            this.loadJobs();
+
+            this.refreshJobsPeriodically();
+        },
+
+        /**
+         * Clean after the component is destroyed.
+         */
+        destroyed() {
+            clearInterval(this.interval);
+        },
+
+
+        /**
+         * Watch these properties for changes.
+         */
+        watch: {
+            '$route'() {
+                this.page = 1;
+
+                this.loadJobs();
+            }
+        },
+
+
+        methods: {
+            /**
+             * Load the jobs of the given tag.
+             */
+            loadJobs(starting = -1, refreshing = false) {
+                if (!refreshing) {
+                    this.ready = false;
                 }
-                this.loadJobs(-1, true);
-            }, 3000);
-        },
-        /**
-         * Load the jobs for the previous page.
-         */
-        previous() {
-            this.loadJobs(
-                (this.page - 2) * this.perPage
-            );
-            this.page -= 1;
-            this.hasNewEntries = false;
-        },
-        /**
-         * Load the jobs for the next page.
-         */
-        next() {
-            this.loadJobs(
-                this.page * this.perPage
-            );
-            this.page += 1;
-            this.hasNewEntries = false;
-        },
-        /**
-         * Deleting the selected jobs
-         */
-        deleteSelected() {
-            this.$http
-                .post(Horizon.basePath + '/api/jobs/pending/batch-delete', this.selected)
-                .then(() => {
-                    this.loadJobs();
-                    this.selected = [];
-                })
-        },
+
+                this.$http.get(Horizon.basePath + '/api/jobs/' + this.$route.params.type + '?starting_at=' + starting + '&limit=' + this.perPage)
+                    .then(response => {
+                        if (!this.$root.autoLoadsNewEntries && refreshing && this.jobs.length && _.first(response.data.jobs).id !== _.first(this.jobs).id) {
+                            this.hasNewEntries = true;
+                        } else {
+                            this.jobs = response.data.jobs;
+
+                            this.totalPages = Math.ceil(response.data.total / this.perPage);
+                        }
+
+                        this.ready = true;
+                    });
+            },
+
+
+            loadNewEntries() {
+                this.jobs = [];
+
+                this.loadJobs(-1, false);
+
+                this.hasNewEntries = false;
+            },
+
+
+            /**
+             * Refresh the jobs every period of time.
+             */
+            refreshJobsPeriodically() {
+                this.interval = setInterval(() => {
+                    if (this.page != 1) {
+                        return;
+                    }
+
+                    this.loadJobs(-1, true);
+                }, 3000);
+            },
+
+
+            /**
+             * Load the jobs for the previous page.
+             */
+            previous() {
+                this.loadJobs(
+                    (this.page - 2) * this.perPage
+                );
+
+                this.page -= 1;
+
+                this.hasNewEntries = false;
+            },
+
+
+            /**
+             * Load the jobs for the next page.
+             */
+            next() {
+                this.loadJobs(
+                    this.page * this.perPage
+                );
+
+                this.page += 1;
+
+                this.hasNewEntries = false;
+            },
+            /**
+             * Deleting the selected jobs
+             */
+            deleteSelected() {
+                this.$http
+                    .post(Horizon.basePath + '/api/jobs/pending/batch-delete', this.selected)
+                    .then(() => {
+                        this.loadJobs();
+                        this.selected = [];
+                    })
+            },
+        }
     }
-}
 </script>
 
 <template>
