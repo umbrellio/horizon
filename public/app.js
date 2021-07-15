@@ -84457,7 +84457,7 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _vm.ready && _vm.jobs.length === 0
+      _vm.ready && _vm.jobs.length == 0
         ? _c(
             "div",
             {
@@ -84514,21 +84514,21 @@ var render = function() {
                 _vm._v(" "),
                 _c("th", [_vm._v("Job")]),
                 _vm._v(" "),
-                _vm.$route.params.type === "pending"
+                _vm.$route.params.type == "pending"
                   ? _c("th", { staticClass: "text-right" }, [
                       _vm._v("Queued At")
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.$route.params.type === "completed"
+                _vm.$route.params.type == "completed"
                   ? _c("th", [_vm._v("Queued At")])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.$route.params.type === "completed"
+                _vm.$route.params.type == "completed"
                   ? _c("th", [_vm._v("Completed At")])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.$route.params.type === "completed"
+                _vm.$route.params.type == "completed"
                   ? _c("th", { staticClass: "text-right" }, [_vm._v("Runtime")])
                   : _vm._e()
               ])
@@ -84564,7 +84564,7 @@ var render = function() {
                                     },
                                     [
                                       _vm._v(
-                                        "Load New\n                        Entries"
+                                        "Load New\n                            Entries"
                                       )
                                     ]
                                   )
@@ -84607,7 +84607,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-secondary btn-md",
-                  attrs: { disabled: _vm.page === 1 },
+                  attrs: { disabled: _vm.page == 1 },
                   on: { click: _vm.previous }
                 },
                 [_vm._v("Previous")]

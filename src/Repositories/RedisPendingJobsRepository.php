@@ -34,26 +34,30 @@ class RedisPendingJobsRepository implements PendingJobsRepository
             }
         });
 
-        collect($jobs)
+        $ids = collect($jobs)
             ->filter(function (array $job) {
                 return $job['status'] === 'pending';
-            })->each(function (array $job) {
-                $this->deleteJob($job['id']);
-            });
+            })
+            ->pluck('id')
+            ->toArray();
+
+        $this->deleteJobs($ids);
     }
 
     /**
      * Delete the job with the given ID
      *
-     * @param string $id
+     * @param array $ids
      * @return void
      */
-    private function deleteJob($id): void
+    private function deleteJobs(array $ids): void
     {
-        $this->connection()->pipeline(function ($pipe) use ($id) {
+        $this->connection()->pipeline(function ($pipe) use ($ids) {
 
-            $pipe->del($id);
-            $pipe->zrem('pending_jobs', $id);
+            $pipe->del($ids);
+
+            $pipe->zrem('pending_jobs', ...$ids);
+            $pipe->zrem('recent_jobs', ...$ids);
         });
     }
 

@@ -40,6 +40,7 @@
         components: {
             JobRow,
         },
+
         /**
          * Prepare the component.
          */
@@ -185,7 +186,7 @@
             </div>
 
 
-            <div v-if="ready && jobs.length === 0"
+            <div v-if="ready && jobs.length == 0"
                  class="d-flex flex-column align-items-center justify-content-center card-bg-secondary p-5 bottom-radius">
                 <span>There aren't any jobs.</span>
             </div>
@@ -197,30 +198,30 @@
                         <input type="checkbox" v-model="selectedAll">
                     </th>
                     <th>Job</th>
-                    <th v-if="$route.params.type === 'pending'" class="text-right">Queued At</th>
-                    <th v-if="$route.params.type ==='completed'">Queued At</th>
-                    <th v-if="$route.params.type ==='completed'">Completed At</th>
-                    <th v-if="$route.params.type ==='completed'" class="text-right">Runtime</th>
+                    <th v-if="$route.params.type=='pending'" class="text-right">Queued At</th>
+                    <th v-if="$route.params.type=='completed'">Queued At</th>
+                    <th v-if="$route.params.type=='completed'">Completed At</th>
+                    <th v-if="$route.params.type=='completed'" class="text-right">Runtime</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr v-if="hasNewEntries" key="newEntries" class="dontanimate">
-                    <td colspan="100" class="text-center card-bg-secondary py-1">
-                        <small><a href="#" v-on:click.prevent="loadNewEntries" v-if="!loadingNewEntries">Load New
-                            Entries</a></small>
+                    <tr v-if="hasNewEntries" key="newEntries" class="dontanimate">
+                        <td colspan="100" class="text-center card-bg-secondary py-1">
+                            <small><a href="#" v-on:click.prevent="loadNewEntries" v-if="!loadingNewEntries">Load New
+                                Entries</a></small>
 
-                        <small v-if="loadingNewEntries">Loading...</small>
-                    </td>
-                </tr>
+                            <small v-if="loadingNewEntries">Loading...</small>
+                        </td>
+                    </tr>
 
-                <tr v-for="job in jobs" :key="job.id" :job="job" :selected.sync="selected" is="job-row">
-                </tr>
+                    <tr v-for="job in jobs" :key="job.id" :job="job" :selected.sync="selected" is="job-row">
+                    </tr>
                 </tbody>
             </table>
 
             <div v-if="ready && jobs.length" class="p-3 d-flex justify-content-between border-top">
-                <button @click="previous" class="btn btn-secondary btn-md" :disabled="page === 1">Previous</button>
+                <button @click="previous" class="btn btn-secondary btn-md" :disabled="page==1">Previous</button>
                 <button @click="next" class="btn btn-secondary btn-md" :disabled="page>=totalPages">Next</button>
             </div>
         </div>
