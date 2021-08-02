@@ -36,9 +36,17 @@ class RedisPendingJobsRepository implements PendingJobsRepository
 
         $ids = collect($jobs)
             ->filter(function (array $job) {
-                return $job['status'] === 'pending';
+                $job = is_array($job) ? array_values($job) : null;
+
+                $hasId = is_array($job) && $job[0] !== null && $job[0] !== false;
+                $hasPending = isset($job[1]) && $job[1] === 'pending';
+
+                return $hasId && $hasPending;
             })
-            ->pluck('id')
+            ->values()
+            ->map(function ($job) {
+                return $job[0];
+            })
             ->toArray();
 
         $this->deleteJobs($ids);
