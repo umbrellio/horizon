@@ -1,5 +1,5 @@
 {
-    "name": "laravel/horizon",
+    "name": "umbrellio/horizon",
     "description": "Dashboard and code-driven configuration for Laravel queues.",
     "keywords": ["laravel", "queue"],
     "license": "MIT",
