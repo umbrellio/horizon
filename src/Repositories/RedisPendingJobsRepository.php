@@ -43,9 +43,8 @@ class RedisPendingJobsRepository implements PendingJobsRepository
 
                 return $hasId && $hasPending;
             })
-            ->values()
             ->map(function ($job) {
-                return $job[0];
+                return array_values($job)[0];
             })
             ->toArray();
 
