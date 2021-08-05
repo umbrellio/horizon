@@ -194,7 +194,7 @@
             <table v-if="ready && jobs.length > 0" class="table table-hover table-sm mb-0">
                 <thead>
                 <tr>
-                    <th style="width: 40px">
+                    <th v-if="$route.params.type === 'pending'" style="width: 40px">
                         <input type="checkbox" v-model="selectedAll">
                     </th>
                     <th>Job</th>

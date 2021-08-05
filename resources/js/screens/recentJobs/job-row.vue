@@ -1,7 +1,7 @@
 <template>
     <tr>
 
-        <td>
+        <td v-if="$route.params.type == 'pending'">
             <input
                 type="checkbox"
                 :checked="this.selected.includes(this.job.id)"
