@@ -84472,45 +84472,47 @@ var render = function() {
         ? _c("table", { staticClass: "table table-hover table-sm mb-0" }, [
             _c("thead", [
               _c("tr", [
-                _c("th", { staticStyle: { width: "40px" } }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.selectedAll,
-                        expression: "selectedAll"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(_vm.selectedAll)
-                        ? _vm._i(_vm.selectedAll, null) > -1
-                        : _vm.selectedAll
-                    },
-                    on: {
-                      change: function($event) {
-                        var $$a = _vm.selectedAll,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 && (_vm.selectedAll = $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              (_vm.selectedAll = $$a
-                                .slice(0, $$i)
-                                .concat($$a.slice($$i + 1)))
+                _vm.$route.params.type === "pending"
+                  ? _c("th", { staticStyle: { width: "40px" } }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selectedAll,
+                            expression: "selectedAll"
                           }
-                        } else {
-                          _vm.selectedAll = $$c
+                        ],
+                        attrs: { type: "checkbox" },
+                        domProps: {
+                          checked: Array.isArray(_vm.selectedAll)
+                            ? _vm._i(_vm.selectedAll, null) > -1
+                            : _vm.selectedAll
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.selectedAll,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 && (_vm.selectedAll = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.selectedAll = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.selectedAll = $$c
+                            }
+                          }
                         }
-                      }
-                    }
-                  })
-                ]),
+                      })
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
                 _c("th", [_vm._v("Job")]),
                 _vm._v(" "),
@@ -84652,16 +84654,18 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", [
-    _c("td", [
-      _c("input", {
-        attrs: { type: "checkbox" },
-        domProps: {
-          checked: this.selected.includes(this.job.id),
-          value: _vm.job.id
-        },
-        on: { change: _vm.handleSelect }
-      })
-    ]),
+    _vm.$route.params.type == "pending"
+      ? _c("td", [
+          _c("input", {
+            attrs: { type: "checkbox" },
+            domProps: {
+              checked: this.selected.includes(this.job.id),
+              value: _vm.job.id
+            },
+            on: { change: _vm.handleSelect }
+          })
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "td",
