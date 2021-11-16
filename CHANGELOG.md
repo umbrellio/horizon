@@ -1,6 +1,58 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/horizon/compare/v5.7.7...5.x)
+## [Unreleased](https://github.com/laravel/horizon/compare/v5.7.15...5.x)
+
+
+## [v5.7.15 (2021-10-26)](https://github.com/laravel/horizon/compare/v5.7.14...v5.7.15)
+
+### Changed
+- Use callAfterResolving to register QueueManager ([#1089](https://github.com/laravel/horizon/pull/1089))
+
+
+## [v5.7.14 (2021-10-12)](https://github.com/laravel/horizon/compare/v5.7.13...v5.7.14)
+
+### Changed
+- Alphabetically sort jobs/queues for metrics ([#1083](https://github.com/laravel/horizon/pull/1083))
+- Update page title when switching between Pending and Completed views ([#1084](https://github.com/laravel/horizon/pull/1084))
+
+
+## [v5.7.13 (2021-09-14)](https://github.com/laravel/horizon/compare/v5.7.12...v5.7.13)
+
+### Changed
+- Added pushed at to failedJobs ([#0](https://github.com/laravel/horizon/pull/1069))
+
+### Fixed
+- Check if `failedJob.reserved_at` is set before making time calculation ([#1067](https://github.com/laravel/horizon/pull/1067))
+
+
+## [v5.7.12 (2021-08-31)](https://github.com/laravel/horizon/compare/v5.7.11...v5.7.12)
+
+### Changed
+- Improve completed jobs UI ([#1064](https://github.com/laravel/horizon/pull/1064))
+
+
+## [v5.7.11 (2021-08-17)](https://github.com/laravel/horizon/compare/v5.7.10...v5.7.11)
+
+### Changed
+- Show paused supervisors on dashboard ([#1052](https://github.com/laravel/horizon/pull/1052))
+
+
+## [v5.7.10 (2021-08-03)](https://github.com/laravel/horizon/compare/v5.7.9...v5.7.10)
+
+### Changed
+- Unified asset publishing ([#1045](https://github.com/laravel/horizon/pull/1045))
+
+
+## [v5.7.9 (2021-06-08)](https://github.com/laravel/horizon/compare/v5.7.8...v5.7.9)
+
+### Changed
+- Use env. to set config domain and path ([#1030](https://github.com/laravel/horizon/pull/1030))
+
+
+## [v5.7.8 (2021-05-27)](https://github.com/laravel/horizon/compare/v5.7.7...v5.7.8)
+
+### Fixed
+- Revert app layout PR ([#1026](https://github.com/laravel/horizon/pull/1026))
 
 
 ## [v5.7.7 (2021-05-18)](https://github.com/laravel/horizon/compare/v5.7.6...v5.7.7)

@@ -14,7 +14,7 @@
                 perPage: 50,
                 totalPages: 1,
                 jobs: [],
-                selected: [],
+                selected: []
             };
         },
 
@@ -45,9 +45,7 @@
          * Prepare the component.
          */
         mounted() {
-            document.title = this.$route.params.type == 'pending'
-                        ? 'Horizon - Pending Jobs'
-                        : 'Horizon - Completed Jobs';
+            this.updatePageTitle();
 
             this.loadJobs();
 
@@ -67,6 +65,8 @@
          */
         watch: {
             '$route'() {
+                this.updatePageTitle();
+
                 this.page = 1;
 
                 this.loadJobs();
@@ -147,8 +147,18 @@
 
                 this.hasNewEntries = false;
             },
+
             /**
-             * Deleting the selected jobs
+             * Update the page title.
+             */
+            updatePageTitle() {
+                document.title = this.$route.params.type == 'pending'
+                        ? 'Horizon - Pending Jobs'
+                        : 'Horizon - Completed Jobs';
+            },
+
+            /**
+             * Delete the selected jobs
              */
             deleteSelected() {
                 this.$http

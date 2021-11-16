@@ -79,7 +79,7 @@ class HorizonServiceProvider extends ServiceProvider
     {
         $this->publishes([
             HORIZON_PATH.'/public' => public_path('vendor/horizon'),
-        ], 'horizon-assets');
+        ], ['horizon-assets', 'laravel-assets']);
     }
 
     /**
@@ -187,7 +187,7 @@ class HorizonServiceProvider extends ServiceProvider
      */
     protected function registerQueueConnectors()
     {
-        $this->app->resolving(QueueManager::class, function ($manager) {
+        $this->callAfterResolving(QueueManager::class, function ($manager) {
             $manager->addConnector('redis', function () {
                 return new RedisConnector($this->app['redis']);
             });
